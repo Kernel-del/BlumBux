@@ -1,10 +1,11 @@
 #include <iostream>
-#include "rules_two_dimensional.hpp"
+#include "src/geometric_2D_constants/import_lib.hpp"
 
 int main() {
-    Segment a(0, 0, 0, 1);
-    std::cout << "Длина отрезка = " << a.getLen() << " ед.\n";
-    std::cout << "Отрезок, относительно первой точки, смотрит по " << a.getAngleP1() << " радиану\n";
+    Segment a(0, 1, 2, 0);
+    Segment b(0, 0, 1, 2);
+    Point c(func::getIntersectionPoint(a, b));
 
+    std::cout << "Позиция пересечений отрезков a и b на кооринатах (" << c.getX() << ", " << c.getY() << ")\n";
     return 0;
 }
