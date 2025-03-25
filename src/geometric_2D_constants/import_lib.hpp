@@ -14,7 +14,9 @@ class Point;
 #include "point.hpp"
 #include "radian.hpp"
 #include "segment.hpp"
-#include "ray.hpp"
 #include "figure.hpp"
+#include "circle.hpp"
+#include "straight.hpp"
+#include "ray.hpp"
 
 #include "func.hpp"

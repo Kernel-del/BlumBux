@@ -1,7 +1,6 @@
 #pragma once
 #include "import_lib.hpp"
 
-
 class Ray {
     private:
         Point startPos;
@@ -12,59 +11,75 @@ class Ray {
         // Инициализировать луч без задания параметров
         Ray() {}
         // Создать луч с начальными координатами и поворотом
-        Ray(Point startPos, radian angle) {
-            this->startPos = startPos;
-            this->angle = angle;
-        }
-        Ray(Point startPos, double angle) {
-            this->startPos = startPos;
-            this->angle = angle;
-        }
+        Ray(const Point& startPos, const radian& angle): startPos(startPos), angle(angle) {}
+        Ray(const Point& startPos, const double angle): startPos(startPos), angle(angle) {}
     
         // Создать луч с начальными координатами и поворотом
-        Ray(double x, double y, radian angle) {
-            startPos = Point(x, y);
-            this->angle = angle;
-        }
-        Ray(double x, double y, double angle) {
-            startPos = Point(x, y);
-            this->angle = angle;
-        }
+        Ray(const double x, const double y, const radian& angle): startPos(x, y), angle(angle) {}
+        Ray(const double x, const double y, const double angle): startPos(x, y), angle(angle) {}
     
         // ### GET ###
     
-        Point& getStartPos() { return startPos; }
+        Point getStartPos() const { return startPos; }
     
         // Возвращает угол поворота луча относительно абсциссы (в радианах)
-        radian& getAngle() { return angle; }
+        radian getAngle() const { return angle; }
+
+
+        // ### SET ###
+
+        Ray& setStartPos(const Point& startPos) {
+            this->startPos = startPos;
+            return *this;
+        }
+        Ray& setStartPos(const double x, const double y) {
+            startPos(x, y);
+            return *this;
+        }
+
+        Ray& setAngle(const double angle) {
+            this->angle = angle;
+            return *this;
+        }
+        Ray& setAngle(const radian& angle) {
+            this->angle = angle;
+            return *this;
+        }
+
         
         // ### operator ###
     
         Ray& operator=(const Ray& other) {
-            startPos = other.startPos;
-            angle = other.angle;
+            this->startPos = other.startPos;
+            this->angle = other.angle;
             return *this;
         }
     
         Ray& operator()(const Ray& other) {
-            startPos = other.startPos;
-            angle = other.angle;
+            this->startPos = other.startPos;
+            this->angle = other.angle;
             return *this;
         }
     
-        Ray& operator()(Point startPos, radian angle) {
+        Ray& operator()(const Point& startPos, const radian& angle) {
             this->startPos = startPos;
             this->angle = angle;
             return *this;
         }
-        Ray& operator()(Point startPos, double angle) {
+        Ray& operator()(const Point& startPos, const double angle) {
             this->startPos = startPos;
             this->angle = angle;
             return *this;
         }
     
-        Ray& operator()(double x, double y, double angle) {
-            startPos = Point(x, y);
+        Ray& operator()(const double x, const double y, const double angle) {
+            this->startPos(x, y);
+            this->angle = angle;
+            return *this;
+        }
+
+        Ray& operator()(const double x, const double y, const radian& angle) {
+            this->startPos(x, y);
             this->angle = angle;
             return *this;
         }
