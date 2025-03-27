@@ -18,5 +18,6 @@ class Point;
 #include "circle.hpp"
 #include "straight.hpp"
 #include "ray.hpp"
+#include "graphics/graphics.hpp"
 
 #include "func.hpp"

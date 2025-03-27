@@ -1,6 +1,5 @@
 #include <iostream>
 #include "src/geometric_2D_constants/import_lib.hpp"
-#include "src/geometric_2D_constants/graphics/graphics.cpp"
 
 
 int main() {
@@ -10,8 +9,9 @@ int main() {
     Ray b(0, 0, 0);
     Circle a(20, 0, 10);
 
-    double fov_player = 120;
+    double fov_player = 60;
     double step = 0.2;
+    double rotate = 0.02;
 
     int x, y; // Корды курсора
     double real_fov = fov_player*M_PI/180;
@@ -23,19 +23,30 @@ int main() {
             }
             if (event.type == SDL_KEYDOWN) {
                 if (event.key.keysym.sym == SDLK_a) {
-                    b.setAngle(b.getAngle()-0.02);
+                    b.setStartPos(b.getStartPos().getX()-std::cos(b.getAngle().get()+M_PI/2)*step, 
+                                  b.getStartPos().getY()-std::sin(b.getAngle().get()+M_PI/2)*step);
                 }
                 if (event.key.keysym.sym == SDLK_d) {
-                    b.setAngle(b.getAngle()+0.02);
+                    b.setStartPos(b.getStartPos().getX()+std::cos(b.getAngle().get()+M_PI/2)*step, 
+                                  b.getStartPos().getY()+std::sin(b.getAngle().get()+M_PI/2)*step);
                 }
                 if (event.key.keysym.sym == SDLK_w) {
-                    std::cout<<"Нажата w!\n";
                     b.setStartPos(b.getStartPos().getX()+std::cos(b.getAngle().get())*step, b.getStartPos().getY()+std::sin(b.getAngle().get())*step);
                 }
                 if (event.key.keysym.sym == SDLK_s) {
-                    std::cout<<"Нажата w!\n";
                     b.setStartPos(b.getStartPos().getX()-std::cos(b.getAngle().get())*step, b.getStartPos().getY()-std::sin(b.getAngle().get())*step);
                 }
+
+                if (event.key.keysym.sym == SDLK_q) {
+                    running = false;
+                }
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    running = false;
+                }
+            }
+            if(event.type == SDL_MOUSEMOTION) {
+                b.setAngle(b.getAngle()-step*event.motion.xrel/76);
+                g_engine.setMousePos(g_engine.getScreenWidth()/2, g_engine.getScreenHeight()/2);
             }
         }
 

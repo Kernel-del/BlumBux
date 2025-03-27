@@ -9,6 +9,7 @@ class Graphics {
         SDL_Renderer *ren;
         SDL_DisplayMode DM;
     public:
+        Graphics() {}
         Graphics(const char* title, size_t x, size_t y) {
             if (SDL_Init(SDL_INIT_EVERYTHING) != 0){
                 std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
@@ -41,6 +42,9 @@ class Graphics {
         }
         void set_color(u_int8_t w) {
             SDL_SetRenderDrawColor(ren, w, w, w, 255);
+        }
+        void set_fullscrean(bool select) {
+            SDL_SetWindowFullscreen(win, select);
         }
         
         void clear() {
@@ -89,6 +93,11 @@ class Graphics {
         }
 
 
+        void setMousePos(int x, int y) {
+            SDL_WarpMouseInWindow(win, x, y);
+        }
+
+
         void quit() {
             SDL_DestroyWindow(win);
             win = NULL;
@@ -97,6 +106,33 @@ class Graphics {
             ren = NULL;
 
             SDL_Quit();
+        }
+
+
+        void operator () (const char* title, size_t x, size_t y) {
+            if (SDL_Init(SDL_INIT_EVERYTHING) != 0){
+                std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
+                throw 1;
+            }
+            win = SDL_CreateWindow(title, x, y, 640, 480, SDL_WINDOW_SHOWN);
+            if (win == nullptr){
+                std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
+                throw 1;
+            }
+            ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+            if (ren == nullptr){
+                std::cerr << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
+                throw 1;
+            }
+            if (SDL_GetHint(SDL_HINT_RENDER_VSYNC)) {
+                std::cout << "V-Sync включен!" << std::endl;
+            } else {
+                std::cout << "V-Sync выключен!" << std::endl;
+            }
+            
+
+            SDL_SetWindowResizable(win, SDL_TRUE); // Изменяемость экрана
+            SDL_GetCurrentDisplayMode(0, &DM);
         }
 
         ~Graphics() {
