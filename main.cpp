@@ -3,15 +3,19 @@
 
 
 int main() {
-    Graphics g_engine("New project", 1000, 1000);
+    Graphics g_engine("New project", 10000, 10000);
     bool running = true;
 
     Ray b(0, 0, 0);
-    Circle a(20, 0, 10);
+    std::vector<Segment> a;
+    a.push_back(Segment(-2.5, 2.5, 2.5, 2.5));
+    a.push_back(Segment(-2.5, 2.5, -2.5, -2.5));
+    a.push_back(Segment(-2.5, -2.5, 2.5, -2.5));
+    a.push_back(Segment(2.5, -2.5, 2.5, 2.5));
 
     double fov_player = 60;
-    double step = 0.2;
-    double rotate = 0.02;
+    double step = 0.02;
+    double rotate = 0.002;
 
     int x, y; // Корды курсора
     double real_fov = fov_player*M_PI/180;
@@ -53,27 +57,40 @@ int main() {
         g_engine.set_color(0, 0, 0, 0);
         g_engine.clear();
         
+        g_engine.draw_triangle(0, 0, g_engine.getScreenWidth(), g_engine.getScreenHeight()/2, 0, g_engine.getScreenHeight()/2, Color(127, 199, 255));
+        g_engine.draw_triangle(0, 0, g_engine.getScreenWidth(), g_engine.getScreenHeight()/2, g_engine.getScreenWidth(), 0, Color(127, 199, 255));
+
+        g_engine.draw_triangle(0, g_engine.getScreenHeight()/2, g_engine.getScreenWidth(), g_engine.getScreenHeight(), 0, g_engine.getScreenHeight(), Color(53, 104, 45));
+        g_engine.draw_triangle(0, g_engine.getScreenHeight()/2, g_engine.getScreenWidth(), g_engine.getScreenHeight(), g_engine.getScreenWidth(), g_engine.getScreenHeight()/2, Color(53, 104, 45));
+
+
         
         for (int i = 0; i < g_engine.getScreenWidth(); ++i) {
             Ray pixel(b);
             double angle_offset = -real_fov / 2.0 + real_fov * i / g_engine.getScreenWidth();
             pixel.setAngle(b.getAngle() + angle_offset);
         
-            std::vector<Point> points = func::getIntersectionPoint(pixel, a);
-            
-            if (!points.empty()) {
-                double raw_distance = func::getDistanceToPoint(b.getStartPos(), points[0]);
-                double corrected_distance = raw_distance * cos(angle_offset * M_PI / 180.0); // Учитываем градусы
-                
-                if (corrected_distance > 0) {
-                    double len = g_engine.getScreenHeight() / (2.0 * corrected_distance);
-                    
-                    int brightness = std::max(0, std::min(255, static_cast<int>(255.0 / corrected_distance)));
-                    g_engine.set_color(brightness);
-                    
-                    g_engine.draw_line(Point(i, g_engine.getScreenHeight() / 2 - len),
-                                       Point(i, g_engine.getScreenHeight() / 2 + len));
+            double corrected_distance = INFINITY;
+
+            for (int i = 0; i < a.size(); ++i) {
+                std::vector<Point> points = func::getIntersectionPoint(pixel, a[i]);
+                if (!points.empty()) {
+                    double raw_distance = func::getDistanceToPoint(b.getStartPos(), points[0]);
+                    double corrected_distance_tmp = raw_distance * cos(angle_offset ); // Учитываем градусы
+                    if (corrected_distance_tmp < corrected_distance && corrected_distance_tmp > 0) {
+                        corrected_distance = corrected_distance_tmp;
+                    }
                 }
+            }
+
+            if (corrected_distance > 0) {
+                double len = g_engine.getScreenHeight() / (2.0 * corrected_distance);
+                
+                int brightness = std::max(0, std::min(255, static_cast<int>(255.0 / corrected_distance)));
+                g_engine.set_color(brightness);
+                
+                g_engine.draw_line(Point(i, g_engine.getScreenHeight() / 2 - len),
+                                Point(i, g_engine.getScreenHeight() / 2 + len));
             }
         }
         

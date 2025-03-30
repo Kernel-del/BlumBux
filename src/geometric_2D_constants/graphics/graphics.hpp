@@ -58,7 +58,7 @@ class Graphics {
             SDL_RenderDrawLine(ren, a.getX(), a.getY(), b.getX(), b.getY());
         }
 
-        void draw_rect(float x1, float y1, float x2, float y2, float x3, float y3, Color c) {
+        void draw_triangle(float x1, float y1, float x2, float y2, float x3, float y3, Color c) {
             SDL_Vertex vertices[3] = {
                 {{x1, y1}, {c.r, c.g, c.b, c.a}},
                 {{x2, y2}, {c.r, c.g, c.b, c.a}},
